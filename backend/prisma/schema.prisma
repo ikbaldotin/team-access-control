@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MembershipStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+model User {
+  id            String         @id @default(uuid()) @db.Uuid
+  email         String         @unique @db.VarChar(254)
+  passwordHash  String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  organizations Organization[]
+  memberships   Membership[]
+}
+
+model Organization {
+  id      String @id @default(uuid()) @db.Uuid
+  ownerId String @db.Uuid
+  name    String @db.VarChar(120)
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  memberships Membership[]
+
+  @@index([ownerId])
+  @@index([deletedAt])
+}
+
+model Membership {
+  id             String           @id @default(uuid()) @db.Uuid
+  userId         String           @db.Uuid
+  organizationId String           @db.Uuid
+  roleId         String           @db.Uuid
+  status         MembershipStatus @default(ACTIVE)
+  joinedAt       DateTime         @default(now())
+  user           User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  role           Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, status])
+  @@index([userId, status])
+  @@index([roleId])
+}
+
+model Role {
+  id              String           @id @default(uuid()) @db.Uuid
+  code            String           @unique @db.VarChar(40)
+  description     String?
+  rolePermissions RolePermission[]
+  memberships     Membership[]
+}
+
+model Permission {
+  id              String           @id @default(uuid()) @db.Uuid
+  code            String           @unique
+  description     String?
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  roleId       String     @db.Uuid
+  permissionId String     @db.Uuid
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
