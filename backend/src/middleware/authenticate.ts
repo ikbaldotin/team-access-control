@@ -15,7 +15,7 @@ export const authenticate = async (
     if (!authHeader.startsWith("Bearer ")) {
       throw new AppError("invalid formate for authentication header", 401);
     }
-    const accessToken = authHeader.split("")[1];
+    const accessToken = authHeader.split(" ")[1];
     if (!accessToken) {
       throw new AppError("access token is missing", 401);
     }
