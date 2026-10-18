@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../../shared/helper/CatchAsync.js";
-import { createOrganizationSchema } from "./organization.schema.js";
+import {
+  createOrganizationSchema,
+  updateOrganizationSchema,
+} from "./organization.schema.js";
 import organizationService from "./organization.container.js";
 import { AppError } from "../../shared/error/AppError.js";
 
@@ -45,6 +48,33 @@ export const getOrganizationController = catchAsync(
     return res.status(200).json({
       success: true,
       data: result,
+    });
+  },
+);
+
+export const updateOrganizationController = catchAsync(
+  async (req: Request, res: Response) => {
+    const organizationId = req.params.organizationId as string;
+    const data = updateOrganizationSchema.parse(req.body);
+    const organization = await organizationService.updateOrganization(
+      organizationId,
+      data,
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Organization updated successfully",
+      data: { organization },
+    });
+  },
+);
+
+export const deleteOrganizationController = catchAsync(
+  async (req: Request, res: Response) => {
+    const organizationId = req.params.organizationId as string;
+    await organizationService.deleteOrganization(organizationId);
+    return res.status(200).json({
+      success: true,
+      message: "Organization deleted successfully",
     });
   },
 );

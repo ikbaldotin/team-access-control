@@ -2,7 +2,10 @@ import { Organization } from "../../generated/prisma/index.js";
 import { prisma } from "../../lib/prisma.js";
 import { AppError } from "../../shared/error/AppError.js";
 import { IOrganizationRepository } from "./organization.interface.js";
-import { createOrganizationDTO } from "./organization.schema.js";
+import {
+  createOrganizationDTO,
+  UpdateOrganizationDTO,
+} from "./organization.schema.js";
 
 export class OrganizationRepository implements IOrganizationRepository {
   async createWithOwner(
@@ -40,6 +43,7 @@ export class OrganizationRepository implements IOrganizationRepository {
   async findAllForUser(userId: string): Promise<Organization[] | null> {
     const organization = await prisma.organization.findMany({
       where: {
+        deletedAt: null,
         memberships: {
           some: {
             userId,
@@ -61,5 +65,29 @@ export class OrganizationRepository implements IOrganizationRepository {
       },
     });
     return organization;
+  }
+  async update(
+    organizationId: string,
+    data: UpdateOrganizationDTO,
+  ): Promise<Organization> {
+    const organization = await prisma.organization.update({
+      where: {
+        id: organizationId,
+        deletedAt: null,
+      },
+      data,
+    });
+    return organization;
+  }
+  async softDelete(organizationId: string): Promise<void> {
+    const organization = await prisma.organization.updateMany({
+      where: {
+        id: organizationId,
+        deletedAt: null,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
   }
 }

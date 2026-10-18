@@ -1,5 +1,8 @@
 import { Organization } from "../../generated/prisma/index.js";
-import { createOrganizationDTO } from "./organization.schema.js";
+import {
+  createOrganizationDTO,
+  UpdateOrganizationDTO,
+} from "./organization.schema.js";
 
 export interface IOrganizationRepository {
   createWithOwner(
@@ -8,4 +11,10 @@ export interface IOrganizationRepository {
   ): Promise<Organization>;
   findAllForUser(userId: string): Promise<Organization[] | null>;
   findById(organizationId: string): Promise<Organization | null>;
+
+  update(
+    organizationId: string,
+    data: UpdateOrganizationDTO,
+  ): Promise<Organization>;
+  softDelete(organizationId: string): Promise<void>;
 }
