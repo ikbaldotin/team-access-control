@@ -4,6 +4,7 @@ import helmet from "helmet";
 import authRouter from "./modules/auth/auth.route.js";
 import organizationRouter from "./modules/organizations/organization.route.js";
 import cookieParser from "cookie-parser";
+import { globalErrorHandler } from "./middleware/error.middleware.js";
 export const app = express();
 app.disable("x-powered-by");
 app.use(helmet());
@@ -18,3 +19,5 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/organization", organizationRouter);
+
+app.use(globalErrorHandler);
