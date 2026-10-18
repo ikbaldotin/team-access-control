@@ -1,7 +1,7 @@
 import { User } from "../../generated/prisma/index.js";
 import { prisma } from "../../lib/prisma.js";
 import { IAuthRepository } from "./auth.interface.js";
-import { registerUseDTO } from "./auth.schema.js";
+import { registerUserDTO } from "./auth.schema.js";
 
 export class AuthRepository implements IAuthRepository {
   async findById(id: string): Promise<User | null> {
@@ -20,7 +20,7 @@ export class AuthRepository implements IAuthRepository {
     });
     return user;
   }
-  async create(data: registerUseDTO): Promise<User> {
+  async create(data: registerUserDTO): Promise<User> {
     const user = await prisma.user.create({
       data: {
         email: data.email,
