@@ -34,6 +34,14 @@ const permissions = [
     code: "projects:read",
     description: "Read projects",
   },
+  {
+    code: "members:role-update",
+    description: "Update member roles",
+  },
+  {
+    code: "members:reactivate",
+    description: "Reactivate suspended members",
+  },
 ];
 
 const rolePermissions: Record<string, string[]> = {

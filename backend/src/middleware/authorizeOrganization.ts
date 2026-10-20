@@ -41,7 +41,7 @@ export const authorizeOrganizationPermission = (permissionCode: string) => {
       if (!membership) {
         throw new AppError("You do not have access to this organization", 403);
       }
-      const hasPermission = membership.role.rolePermissions.map(
+      const hasPermission = membership.role.rolePermissions.some(
         (rolePermission) => rolePermission.permission.code === permissionCode,
       );
       if (!hasPermission) {
