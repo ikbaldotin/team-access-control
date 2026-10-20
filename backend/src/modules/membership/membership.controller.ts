@@ -97,3 +97,20 @@ export const reactivateMemberController = catchAsync(
     });
   },
 );
+export const getMemberDetailsController = catchAsync(
+  async (req: Request, res: Response) => {
+    const organizationId = req.params.organizationId as string;
+    const userId = req.params.userId as string;
+
+    const result = await membershipService.getMemberDetails(
+      organizationId,
+      userId,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Member details fetched successfully",
+      membership: result,
+    });
+  },
+);

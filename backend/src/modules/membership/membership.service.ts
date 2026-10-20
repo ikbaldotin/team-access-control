@@ -151,4 +151,30 @@ export class MembershipService {
       "ACTIVE",
     );
   }
+  async getMemberDetails(organizationId: string, userId: string) {
+    const organizationExists =
+      await this.membershipRepo.findOrganization(organizationId);
+
+    if (!organizationExists) {
+      throw new AppError("Organization not found", 404);
+    }
+
+    const membership = await this.membershipRepo.findMemberDetails(
+      userId,
+      organizationId,
+    );
+
+    if (!membership) {
+      throw new AppError("Membership not found", 404);
+    }
+
+    return {
+      userId: membership.userId,
+      organizationId: membership.organizationId,
+      email: membership.user.email,
+      role: membership.role.code,
+      status: membership.status,
+      joinedAt: membership.joinedAt,
+    };
+  }
 }

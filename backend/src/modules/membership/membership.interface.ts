@@ -12,6 +12,10 @@ export interface IMembership {
   findAllMembers(
     organizationId: string,
   ): Promise<MembershipWithDetails[] | null>;
+  findMemberDetails(
+    userId: string,
+    organizationId: string,
+  ): Promise<MembershipWithDetails | null>;
   findOrganizationOwnerId(organizationId: string): Promise<string | null>;
   addEmail(
     userId: string,

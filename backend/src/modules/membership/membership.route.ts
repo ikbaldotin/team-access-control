@@ -3,6 +3,7 @@ import { authenticate } from "../../middleware/authenticate.js";
 import { authorizeOrganizationPermission } from "../../middleware/authorizeOrganization.js";
 import {
   addEmailController,
+  getMemberDetailsController,
   listAllMemberController,
   reactivateMemberController,
   removeMemberController,
@@ -40,5 +41,11 @@ membershipRouter.patch(
   authenticate,
   authorizeOrganizationPermission("MEMBERSHIP_REACTIVATE"),
   reactivateMemberController,
+);
+membershipRouter.get(
+  "/:organizationId/:userId",
+  authenticate,
+  authorizeOrganizationPermission("MEMBERSHIP_READ"),
+  getMemberDetailsController,
 );
 export default membershipRouter;

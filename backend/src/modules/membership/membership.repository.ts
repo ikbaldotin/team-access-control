@@ -132,4 +132,28 @@ export class MembershipRepository implements IMembership {
       },
     });
   }
+  async findMemberDetails(
+    userId: string,
+    organizationId: string,
+  ): Promise<MembershipWithDetails | null> {
+    return prisma.membership.findUnique({
+      where: {
+        userId_organizationId: { userId, organizationId },
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        role: {
+          select: {
+            id: true,
+            code: true,
+          },
+        },
+      },
+    });
+  }
 }
