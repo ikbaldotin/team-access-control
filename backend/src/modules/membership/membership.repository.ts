@@ -13,12 +13,13 @@ export class MembershipRepository implements IMembership {
     return user;
   }
   async findOrganization(organizationId: string): Promise<boolean> {
-    const organization = await prisma.organization.findUnique({
+    const organization = await prisma.organization.findFirst({
       where: {
         id: organizationId,
         deletedAt: null,
       },
     });
+
     return organization !== null;
   }
   async findRoleByCode(code: string): Promise<Role | null> {
@@ -80,5 +81,55 @@ export class MembershipRepository implements IMembership {
       },
     });
     return membership;
+  }
+  async findOrganizationOwnerId(
+    organizationId: string,
+  ): Promise<string | null> {
+    const organization = await prisma.organization.findFirst({
+      where: {
+        id: organizationId,
+        deletedAt: null,
+      },
+      select: {
+        ownerId: true,
+      },
+    });
+    if (!organization) {
+      return null;
+    }
+
+    return organization.ownerId;
+  }
+  async updateMembershipStatus(
+    userId: string,
+    organizationId: string,
+    status: Membership["status"],
+  ): Promise<Membership> {
+    const member = await prisma.membership.update({
+      where: {
+        userId_organizationId: { userId, organizationId },
+      },
+      data: {
+        status,
+      },
+    });
+    return member;
+  }
+  async updateMemberRole(
+    userId: string,
+    organizationId: string,
+    roleId: string,
+  ): Promise<Membership> {
+    return prisma.membership.update({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+      },
+      data: {
+        roleId,
+      },
+    });
   }
 }

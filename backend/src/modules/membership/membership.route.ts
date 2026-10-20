@@ -4,6 +4,9 @@ import { authorizeOrganizationPermission } from "../../middleware/authorizeOrgan
 import {
   addEmailController,
   listAllMemberController,
+  reactivateMemberController,
+  removeMemberController,
+  updateMemberRoleController,
 } from "./membership.controller.js";
 
 const membershipRouter = express.Router();
@@ -20,5 +23,22 @@ membershipRouter.get(
   authorizeOrganizationPermission("MEMBERSHIP_READ"),
   listAllMemberController,
 );
-
+membershipRouter.post(
+  "/:organizationId/:userId",
+  authenticate,
+  authorizeOrganizationPermission("MEMBERSHIP_REMOVE"),
+  removeMemberController,
+);
+membershipRouter.post(
+  "/:organizationId/:userId",
+  authenticate,
+  authorizeOrganizationPermission("MEMBERSHIP_ROLE_UPDATE"),
+  updateMemberRoleController,
+);
+membershipRouter.patch(
+  "/:organizationId/:userId/reactivate",
+  authenticate,
+  authorizeOrganizationPermission("MEMBERSHIP_REACTIVATE"),
+  reactivateMemberController,
+);
 export default membershipRouter;

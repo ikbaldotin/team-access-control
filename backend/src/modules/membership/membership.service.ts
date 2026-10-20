@@ -52,4 +52,103 @@ export class MembershipService {
     }));
     return result;
   }
+  async removeMember(userId: string, organizationId: string) {
+    const organizationExists =
+      await this.membershipRepo.findOrganization(organizationId);
+
+    if (!organizationExists) {
+      throw new AppError("Organization not found", 404);
+    }
+    const ownerId =
+      await this.membershipRepo.findOrganizationOwnerId(organizationId);
+    if (ownerId === userId) {
+      throw new AppError("The organization owner cannot be removed", 403);
+    }
+    const membership = await this.membershipRepo.findMembership(
+      userId,
+      organizationId,
+    );
+    if (!membership) {
+      throw new AppError("Membership not found", 404);
+    }
+
+    if (membership.status === "SUSPENDED") {
+      throw new AppError("This member is already suspended", 409);
+    }
+    return await this.membershipRepo.updateMembershipStatus(
+      userId,
+      organizationId,
+      "SUSPENDED",
+    );
+  }
+  async updateMemberRole(
+    organizationId: string,
+    userId: string,
+    roleCode: string,
+  ) {
+    const organizationExists =
+      await this.membershipRepo.findOrganization(organizationId);
+
+    if (!organizationExists) {
+      throw new AppError("Organization not found", 404);
+    }
+    const ownerId =
+      await this.membershipRepo.findOrganizationOwnerId(organizationId);
+    if (ownerId === userId) {
+      throw new AppError("The organization owner cannot be removed", 403);
+    }
+    const membership = await this.membershipRepo.findMembership(
+      organizationId,
+      userId,
+    );
+    if (!membership) {
+      throw new AppError("Membership not found", 404);
+    }
+    if (membership.status === "SUSPENDED") {
+      throw new AppError("Cannot update the role of a suspended member", 409);
+    }
+    const role = await this.membershipRepo.findRoleByCode(roleCode);
+
+    if (!role || role.code === "OWNER") {
+      throw new AppError("Invalid target role", 400);
+    }
+
+    if (membership.roleId === role.id) {
+      throw new AppError("Member already has this role", 409);
+    }
+
+    const updateRole = this.membershipRepo.updateMemberRole(
+      userId,
+      organizationId,
+      role.id,
+    );
+    return updateRole;
+  }
+  async reactivateMember(organizationId: string, userId: string) {
+    const organizationExists =
+      await this.membershipRepo.findOrganization(organizationId);
+
+    if (!organizationExists) {
+      throw new AppError("Organization not found", 404);
+    }
+
+    const membership = await this.membershipRepo.findMembership(
+      userId,
+      organizationId,
+    );
+
+    if (!membership) {
+      throw new AppError("Membership not found", 404);
+    }
+
+    if (membership.status === "ACTIVE") {
+      throw new AppError("This member is already active", 409);
+    }
+
+    return this.membershipRepo.updateMembershipStatus(
+      userId,
+      organizationId,
+      "ACTIVE",
+    );
+  }
 }

@@ -12,7 +12,18 @@ export interface IMembership {
   findAllMembers(
     organizationId: string,
   ): Promise<MembershipWithDetails[] | null>;
+  findOrganizationOwnerId(organizationId: string): Promise<string | null>;
   addEmail(
+    userId: string,
+    organizationId: string,
+    roleId: string,
+  ): Promise<Membership>;
+  updateMembershipStatus(
+    userId: string,
+    organizationId: string,
+    status: Membership["status"],
+  ): Promise<Membership>;
+  updateMemberRole(
     userId: string,
     organizationId: string,
     roleId: string,
