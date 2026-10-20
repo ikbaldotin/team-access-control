@@ -15,37 +15,43 @@ const membershipRouter = express.Router();
 membershipRouter.post(
   "/:organizationId",
   authenticate,
-  authorizeOrganizationPermission("MEMBERSHIP_INVITE"),
+  authorizeOrganizationPermission("members:invite"),
   addEmailController,
 );
 membershipRouter.get(
   "/:organizationId",
   authenticate,
-  authorizeOrganizationPermission("MEMBERSHIP_READ"),
+  authorizeOrganizationPermission("organization:read"),
   listAllMemberController,
 );
 membershipRouter.post(
   "/:organizationId/:userId",
   authenticate,
-  authorizeOrganizationPermission("MEMBERSHIP_REMOVE"),
+  authorizeOrganizationPermission("members:remove"),
   removeMemberController,
 );
-membershipRouter.post(
-  "/:organizationId/:userId",
+membershipRouter.patch(
+  "/:organizationId/:userId/role",
   authenticate,
-  authorizeOrganizationPermission("MEMBERSHIP_ROLE_UPDATE"),
+  authorizeOrganizationPermission("members:role-update"),
+  updateMemberRoleController,
+);
+membershipRouter.post(
+  "/:organizationId/:userId/role",
+  authenticate,
+  authorizeOrganizationPermission("members:role-update"),
   updateMemberRoleController,
 );
 membershipRouter.patch(
   "/:organizationId/:userId/reactivate",
   authenticate,
-  authorizeOrganizationPermission("MEMBERSHIP_REACTIVATE"),
+  authorizeOrganizationPermission("members:reactivate"),
   reactivateMemberController,
 );
 membershipRouter.get(
   "/:organizationId/:userId",
   authenticate,
-  authorizeOrganizationPermission("MEMBERSHIP_READ"),
+  authorizeOrganizationPermission("organization:read"),
   getMemberDetailsController,
 );
 export default membershipRouter;

@@ -98,8 +98,8 @@ export class MembershipService {
       throw new AppError("The organization owner cannot be removed", 403);
     }
     const membership = await this.membershipRepo.findMembership(
-      organizationId,
       userId,
+      organizationId,
     );
     if (!membership) {
       throw new AppError("Membership not found", 404);

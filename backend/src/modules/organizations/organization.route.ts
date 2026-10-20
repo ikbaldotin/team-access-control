@@ -15,20 +15,20 @@ organizationRouter.get("/list", authenticate, listOrganizationsController);
 organizationRouter.get(
   "/:organizationId",
   authenticate,
-  authorizeOrganizationPermission("ORGANIZATION_READ"),
+  authorizeOrganizationPermission("organization:read"),
   getOrganizationController,
 );
 
 organizationRouter.patch(
   "/update/:organizationId",
   authenticate,
-  authorizeOrganizationPermission("ORGANIZATION_UPDATE"),
+  authorizeOrganizationPermission("organization:update"),
   updateOrganizationController,
 );
 organizationRouter.patch(
   "/delete/:organizationId",
   authenticate,
-  authorizeOrganizationPermission("ORGANIZATION_DELETE"),
+  authorizeOrganizationPermission("organization:delete"),
   deleteOrganizationController,
 );
 export default organizationRouter;
