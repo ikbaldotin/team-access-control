@@ -1,7 +1,10 @@
 import express from "express";
 import { authenticate } from "../../middleware/authenticate.js";
 import { authorizeOrganizationPermission } from "../../middleware/authorizeOrganization.js";
-import { addEmailController } from "./membership.controller.js";
+import {
+  addEmailController,
+  listAllMemberController,
+} from "./membership.controller.js";
 
 const membershipRouter = express.Router();
 
@@ -10,6 +13,12 @@ membershipRouter.post(
   authenticate,
   authorizeOrganizationPermission("MEMBERSHIP_INVITE"),
   addEmailController,
+);
+membershipRouter.get(
+  "/:organizationId",
+  authenticate,
+  authorizeOrganizationPermission("MEMBERSHIP_READ"),
+  listAllMemberController,
 );
 
 export default membershipRouter;

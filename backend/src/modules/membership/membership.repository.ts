@@ -1,5 +1,6 @@
 import { Membership, Role, User } from "../../generated/prisma/index.js";
 import { prisma } from "../../lib/prisma.js";
+import { MembershipWithDetails } from "../../types/membershipWithDetails.type.js";
 import { IMembership } from "./membership.interface.js";
 
 export class MembershipRepository implements IMembership {
@@ -38,6 +39,33 @@ export class MembershipRepository implements IMembership {
       },
     });
     return membership;
+  }
+  async findAllMembers(
+    organizationId: string,
+  ): Promise<MembershipWithDetails[] | null> {
+    const member = await prisma.membership.findMany({
+      where: {
+        organizationId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        role: {
+          select: {
+            id: true,
+            code: true,
+          },
+        },
+      },
+      orderBy: {
+        joinedAt: "asc",
+      },
+    });
+    return member;
   }
   async addEmail(
     userId: string,

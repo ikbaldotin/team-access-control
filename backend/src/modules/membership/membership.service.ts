@@ -38,4 +38,18 @@ export class MembershipService {
     );
     return addEmail;
   }
+  async listAllMembet(organizationId: string) {
+    const allMember = await this.membershipRepo.findAllMembers(organizationId);
+    if (!allMember) {
+      throw new AppError("Organization not found", 404);
+    }
+    const result = allMember.map((membership) => ({
+      userId: membership.userId,
+      email: membership.user.email,
+      role: membership.role.code,
+      status: membership.status,
+      joinedAt: membership.joinedAt,
+    }));
+    return result;
+  }
 }

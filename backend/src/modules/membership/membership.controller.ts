@@ -22,3 +22,15 @@ export const addEmailController = catchAsync(
     });
   },
 );
+
+export const listAllMemberController = catchAsync(
+  async (req: Request, res: Response) => {
+    const organizationId = req.params.organizationId as string;
+    const result = await membershipService.listAllMembet(organizationId);
+    return res.status(200).json({
+      success: true,
+      message: "Members fetched successfully",
+      result,
+    });
+  },
+);

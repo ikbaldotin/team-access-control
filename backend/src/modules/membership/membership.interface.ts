@@ -1,5 +1,5 @@
 import { Membership, Role, User } from "../../generated/prisma/index.js";
-import { AddEmailDTO } from "./membership.schema.js";
+import { MembershipWithDetails } from "../../types/membershipWithDetails.type.js";
 
 export interface IMembership {
   findByEmail(email: string): Promise<User | null>;
@@ -9,6 +9,9 @@ export interface IMembership {
     userId: string,
     organizationId: string,
   ): Promise<Membership | null>;
+  findAllMembers(
+    organizationId: string,
+  ): Promise<MembershipWithDetails[] | null>;
   addEmail(
     userId: string,
     organizationId: string,
